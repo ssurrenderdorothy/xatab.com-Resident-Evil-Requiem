@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С 8 марта, Лиза! ❤️</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Minecraft', 'Arial', sans-serif;
+            position: relative;
+            background: linear-gradient(135deg, #1a2f3f 0%, #2a3f4f 100%);
+            overflow: hidden;
+        }
+
+        /* Статичный фон с аксолотлями в сетке */
+        .axolotl-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 15px;
+            padding: 25px;
+        }
+
+        .axolotl {
+            width: 100%;
+            height: auto;
+            max-width: 100px;
+            max-height: 100px;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            filter: drop-shadow(3px 5px 0 rgba(0, 0, 0, 0.4));
+            justify-self: center;
+            align-self: center;
+            animation: none;
+            transition: transform 0.2s ease;
+            margin: 5px;
+        }
+
+        /* Легкое покачивание при наведении (для интерактива) */
+        .axolotl:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(3px 5px 0 rgba(0, 0, 0, 0.6));
+            z-index: 2;
+        }
+
+        /* Цвета аксолотлей из Minecraft */
+        .axolotl-pink { filter: brightness(1) saturate(1.1) drop-shadow(2px 4px 0 #4a2f2f); }
+        .axolotl-brown { filter: brightness(0.8) sepia(0.5) saturate(0.8) drop-shadow(2px 4px 0 #2f2f1a); }
+        .axolotl-gold { filter: brightness(1.2) saturate(1.3) hue-rotate(30deg) drop-shadow(2px 4px 0 #4a3f1a); }
+        .axolotl-cyan { filter: brightness(0.9) saturate(1.4) hue-rotate(160deg) drop-shadow(2px 4px 0 #1a3f4a); }
+        .axolotl-blue { filter: brightness(0.85) saturate(1.5) hue-rotate(200deg) drop-shadow(2px 4px 0 #1a2f4a); }
+
+        /* Контейнер для конверта */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            border-radius: 50px;
+            padding: 30px 50px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .envelope-wrapper {
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            display: inline-block;
+            filter: drop-shadow(0 15px 20px rgba(0,0,0,0.4));
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.1);
+        }
+
+        .envelope-wrapper:active {
+            transform: scale(0.95);
+        }
+
+        /* Конверт */
+        .envelope {
+            position: relative;
+            width: 280px;
+            height: 200px;
+            background: #ff8da1;
+            border-radius: 25px;
+            box-shadow: 0 20px 0 #b25a6e, 0 30px 30px rgba(0,0,0,0.3);
+            border: 5px solid #ff6b8b;
+            image-rendering: pixelated;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: -50px;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 140px solid transparent;
+            border-right: 140px solid transparent;
+            border-bottom: 65px solid #ff6b8b;
+            transform: rotate(180deg);
+            z-index: 5;
+            filter: drop-shadow(0 5px 0 #b24a5e);
+        }
+
+        .envelope-body {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            background: #ff8da1;
+            border-radius: 0 0 25px 25px;
+            border-top: 5px solid #ff6b8b;
+            box-shadow: inset 0 -15px 0 #b25a6e;
+        }
+
+        .heart {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 85px;
+            color: #ff1a4f;
+            text-shadow: 6px 6px 0 #b20f3a, 0 0 25px #ff69b4;
+            z-index: 20;
+            animation: heartbeat 1.2s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Сообщение */
+        .message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #fff0f3 0%, #ffe0e8 100%);
+            padding: 70px;
+            border-radius: 50px;
+            box-shadow: 0 30px 0 #b25a6e, 0 40px 60px rgba(0,0,0,0.6);
+            z-index: 100;
+            font-size: 52px;
+            color: #d43f8d;
+            text-align: center;
+            font-weight: bold;
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            border: 8px solid #ffb6c1;
+            max-width: 90%;
+            width: 900px;
+            font-family: 'Minecraft', 'Arial', sans-serif;
+            text-shadow: 5px 5px 0 #ffb6c1;
+            letter-spacing: 3px;
+            image-rendering: pixelated;
+            line-height: 1.4;
+        }
+
+        @keyframes popIn {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            70% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 60px;
+            cursor: pointer;
+            color: #ff69b4;
+            transition: all 0.3s ease;
+            width: 70px;
+            height: 70px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 50%;
+            background: white;
+            border: 5px solid #ffb6c1;
+            font-weight: bold;
+        }
+
+        .close-btn:hover {
+            color: #ff1493;
+            transform: rotate(180deg) scale(1.1);
+            background: #ffe4e9;
+        }
+
+        .sub-message {
+            font-size: 32px;
+            color: #b23b6b;
+            margin-top: 30px;
+            font-style: italic;
+            text-shadow: 3px 3px 0 #ffb6c1;
+        }
+
+        /* Текст инструкции */
+        .instruction {
+            margin-top: 30px;
+            color: white;
+            font-size: 30px;
+            text-shadow: 4px 4px 0 #1a2f3f, 6px 6px 0 rgba(0,0,0,0.3);
+            background: rgba(255,105,180,0.3);
+            padding: 15px 40px;
+            border-radius: 60px;
+            backdrop-filter: blur(8px);
+            border: 4px solid white;
+            font-family: 'Minecraft', 'Arial', sans-serif;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 0 rgba(0,0,0,0.2);
+        }
+
+        /* Конфетти */
+        .confetti {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            top: -10px;
+            clip-path: polygon(20% 0%, 80% 0%, 100% 20%, 100% 80%, 80% 100%, 20% 100%, 0% 80%, 0% 20%);
+            z-index: 1000;
+            pointer-events: none;
+            image-rendering: pixelated;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .axolotl-bg {
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(6, 1fr);
+                gap: 8px;
+                padding: 10px;
+            }
+            
+            .axolotl {
+                max-width: 50px;
+                max-height: 50px;
+            }
+            
+            .container {
+                padding: 20px 30px;
+            }
+            
+            .message {
+                font-size: 32px;
+                padding: 40px 20px;
+                width: 95%;
+            }
+            
+            .sub-message {
+                font-size: 22px;
+            }
+            
+            .envelope {
+                width: 220px;
+                height: 160px;
+            }
+            
+            .envelope-flap {
+                border-left: 110px solid transparent;
+                border-right: 110px solid transparent;
+                border-bottom: 55px solid #ff6b8b;
+                top: -45px;
+            }
+            
+            .heart {
+                font-size: 65px;
+            }
+            
+            .instruction {
+                font-size: 24px;
+                padding: 12px 25px;
+            }
+            
+            .close-btn {
+                width: 50px;
+                height: 50px;
+                font-size: 40px;
+                line-height: 40px;
+                top: 10px;
+                right: 15px;
+            }
+        }
+
+        /* Minecraft шрифт */
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('https://fonts.cdnfonts.com/s/14025/Minecraftia-Regular.woff') format('woff');
+        }
+    </style>
+</head>
+<body>
+    <!-- Фон с аксолотлями в сетке -->
+    <div class="axolotl-bg" id="axolotlBg"></div>
+
+    <!-- Конверт по центру -->
+    <div class="container">
+        <div class="envelope-wrapper" onclick="showMessage()">
+            <div class="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-body"></div>
+                <div class="heart">❤️</div>
+            </div>
+        </div>
+        <div class="instruction">💗 Нажми на конвертик, красотка Лиза! 💗</div>
+    </div>
+
+    <!-- Всплывающее сообщение -->
+    <div class="message" id="messagePopup" style="display: none;">
+        <span class="close-btn" onclick="closeMessage()">&times;</span>
+        <div>💐 ПОЗДРАВЛЯЮ КРАСОТКУ ЛИЗУ С 8 МАРТА! 💐</div>
+        <div class="sub-message">✨ Ты лучше всех аксолотлей в этом мире! ✨</div>
+        <div style="margin-top: 30px; font-size: 70px;">🌸 🎀 💝 🌸</div>
+    </div>
+
+    <script>
+        function showMessage() {
+            const message = document.getElementById('messagePopup');
+            message.style.display = 'block';
+            createConfetti();
+            createBubbles();
+        }
+
+        function closeMessage() {
+            const message = document.getElementById('messagePopup');
+            message.style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const message = document.getElementById('messagePopup');
+            if (event.target === message) {
+                closeMessage();
+            }
+        }
+
+        function createConfetti() {
+            const colors = ['#ff69b4', '#ff1493', '#ff6b8b', '#ff9eb5', '#d43f8d', '#ffb6c1', '#ff1a4f', '#ff8da1'];
+            
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.width = (15 + Math.random() * 25) + 'px';
+                confetti.style.height = (15 + Math.random() * 25) + 'px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(confetti);
+
+                const animation = confetti.animate([
+                    { transform: `translate(0, 0) rotate(0deg) scale(1)`, opacity: 1 },
+                    { transform: `translate(${Math.random() * 300 - 150}px, ${window.innerHeight + 200}px) rotate(${Math.random() * 1080}deg) scale(0.8)`, opacity: 0 }
+                ], {
+                    duration: 2500 + Math.random() * 2500,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                });
+
+                animation.onfinish = () => confetti.remove();
+            }
+        }
+
+        function createBubbles() {
+            for (let i = 0; i < 40; i++) {
+                const bubble = document.createElement('div');
+                bubble.style.position = 'fixed';
+                bubble.style.left = Math.random() * 100 + '%';
+                bubble.style.bottom = '0';
+                bubble.style.width = (6 + Math.random() * 10) + 'px';
+                bubble.style.height = (6 + Math.random() * 10) + 'px';
+                bubble.style.background = 'rgba(255, 255, 255, 0.7)';
+                bubble.style.borderRadius = '50%';
+                bubble.style.zIndex = '999';
+                bubble.style.pointerEvents = 'none';
+                bubble.style.boxShadow = '0 0 8px white';
+                document.body.appendChild(bubble);
+
+                const animation = bubble.animate([
+                    { transform: 'translateY(0) scale(1)', opacity: 0.8 },
+                    { transform: `translateY(-${window.innerHeight}px) scale(1.5)`, opacity: 0 }
+                ], {
+                    duration: 2000 + Math.random() * 3000,
+                    easing: 'ease-out'
+                });
+
+                animation.onfinish = () => bubble.remove();
+            }
+        }
+
+        function generateAxolotls() {
+            const bg = document.getElementById('axolotlBg');
+            bg.innerHTML = '';
+            
+            const colors = ['pink', 'brown', 'gold', 'cyan', 'blue'];
+            
+            for (let i = 0; i < 36; i++) {
+                const axolotl = document.createElement('img');
+                const colorClass = colors[Math.floor(Math.random() * colors.length)];
+                
+                const svgAxolotl = `<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+                    <rect x="8" y="12" width="16" height="12" fill="#${
+                        colorClass === 'pink' ? 'FF9EB5' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'FFD700' : 
+                        colorClass === 'cyan' ? '40E0D0' : 
+                        '4169E1'
+                    }" />
+                    <rect x="6" y="6" width="20" height="8" fill="#${
+                        colorClass === 'pink' ? 'FFB6C1' : 
+                        colorClass === 'brown' ? 'A0522D' : 
+                        colorClass === 'gold' ? 'FFE55C' : 
+                        colorClass === 'cyan' ? '7FFFD4' : 
+                        '6495ED'
+                    }" />
+                    <rect x="10" y="8" width="4" height="4" fill="white" />
+                    <rect x="18" y="8" width="4" height="4" fill="white" />
+                    <rect x="12" y="10" width="2" height="2" fill="#2E2B5F" />
+                    <rect x="20" y="10" width="2" height="2" fill="#2E2B5F" />
+                    <rect x="2" y="8" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'FF69B4' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'DAA520' : 
+                        colorClass === 'cyan' ? '008B8B' : 
+                        '27408B'
+                    }" />
+                    <rect x="2" y="11" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'FF1493' : 
+                        colorClass === 'brown' ? '5D3A1A' : 
+                        colorClass === 'gold' ? 'B8860B' : 
+                        colorClass === 'cyan' ? '00688B' : 
+                        '1E3A8A'
+                    }" />
+                    <rect x="2" y="14" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'C71585' : 
+                        colorClass === 'brown' ? '3D2B1F' : 
+                        colorClass === 'gold' ? '8B6914' : 
+                        colorClass === 'cyan' ? '005682' : 
+                        '152B6E'
+                    }" />
+                    <rect x="26" y="8" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'FF69B4' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'DAA520' : 
+                        colorClass === 'cyan' ? '008B8B' : 
+                        '27408B'
+                    }" />
+                    <rect x="26" y="11" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'FF1493' : 
+                        colorClass === 'brown' ? '5D3A1A' : 
+                        colorClass === 'gold' ? 'B8860B' : 
+                        colorClass === 'cyan' ? '00688B' : 
+                        '1E3A8A'
+                    }" />
+                    <rect x="26" y="14" width="4" height="3" fill="#${
+                        colorClass === 'pink' ? 'C71585' : 
+                        colorClass === 'brown' ? '3D2B1F' : 
+                        colorClass === 'gold' ? '8B6914' : 
+                        colorClass === 'cyan' ? '005682' : 
+                        '152B6E'
+                    }" />
+                    <rect x="24" y="20" width="6" height="4" fill="#${
+                        colorClass === 'pink' ? 'FF69B4' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'DAA520' : 
+                        colorClass === 'cyan' ? '008B8B' : 
+                        '4169E1'
+                    }" />
+                    <rect x="28" y="22" width="4" height="4" fill="#${
+                        colorClass === 'pink' ? 'FF1493' : 
+                        colorClass === 'brown' ? '5D3A1A' : 
+                        colorClass === 'gold' ? 'B8860B' : 
+                        colorClass === 'cyan' ? '00688B' : 
+                        '27408B'
+                    }" />
+                    <rect x="30" y="24" width="2" height="2" fill="#${
+                        colorClass === 'pink' ? 'C71585' : 
+                        colorClass === 'brown' ? '3D2B1F' : 
+                        colorClass === 'gold' ? '8B6914' : 
+                        colorClass === 'cyan' ? '005682' : 
+                        '152B6E'
+                    }" />
+                    <rect x="6" y="24" width="4" height="4" fill="#${
+                        colorClass === 'pink' ? 'FF69B4' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'DAA520' : 
+                        colorClass === 'cyan' ? '008B8B' : 
+                        '4169E1'
+                    }" />
+                    <rect x="10" y="26" width="2" height="2" fill="#${
+                        colorClass === 'pink' ? 'FF1493' : 
+                        colorClass === 'brown' ? '5D3A1A' : 
+                        colorClass === 'gold' ? 'B8860B' : 
+                        colorClass === 'cyan' ? '00688B' : 
+                        '27408B'
+                    }" />
+                    <rect x="18" y="24" width="4" height="4" fill="#${
+                        colorClass === 'pink' ? 'FF69B4' : 
+                        colorClass === 'brown' ? '8B4513' : 
+                        colorClass === 'gold' ? 'DAA520' : 
+                        colorClass === 'cyan' ? '008B8B' : 
+                        '4169E1'
+                    }" />
+                    <rect x="22" y="26" width="2" height="2" fill="#${
+                        colorClass === 'pink' ? 'FF1493' : 
+                        colorClass === 'brown' ? '5D3A1A' : 
+                        colorClass === 'gold' ? 'B8860B' : 
+                        colorClass === 'cyan' ? '00688B' : 
+                        '27408B'
+                    }" />
+                </svg>`;
+                
+                axolotl.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgAxolotl);
+                axolotl.className = `axolotl axolotl-${colorClass}`;
+                
+                if (Math.random() > 0.6) {
+                    axolotl.style.transform = `scaleX(-1)`;
+                }
+                
+                bg.appendChild(axolotl);
+            }
+        }
+
+        window.onload = function() {
+            generateAxolotls();
+        };
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeMessage();
+            }
+        });
+    </script>
+</body>
+</html>
